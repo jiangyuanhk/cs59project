@@ -94,7 +94,9 @@ postLoginR = do
     case userInfoEntry of
         Nothing -> sendResponseStatus status403 ("Invalid Email or Password"::Text)
         Just (Entity pid p)  -> do
-            return $ object ["userid" .= userinfoUserid p, "token" .= userinfoToken  p]
+            newtoken   <- liftIO randomGen
+            _          <- runDB $ update pid [UserinfoToken =. newtoken]
+            return $ object ["userid" .= userinfoUserid p, "token" .= newtoken]
 instance Yesod App
 
 instance RenderMessage App FormMessage where
