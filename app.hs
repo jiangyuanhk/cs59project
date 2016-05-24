@@ -1,4 +1,6 @@
+--https://pbrisbin.com/posts/writing_json_apis_with_yesod/
 {-# LANGUAGE FlexibleContexts           #-}
+{-# LANGUAGE FlexibleInstances          #-} --Illegal instance declaration for ‘ToJSON (Entity Post)’
 {-# LANGUAGE GADTs                      #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
@@ -6,25 +8,84 @@
 {-# LANGUAGE QuasiQuotes                #-}
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE ViewPatterns               #-}
+import           Control.Applicative        
+import           Control.Monad
 import           Control.Monad.Logger    (runNoLoggingT)
-import           Data.Text               (Text)
+import           Data.Text               (Text, pack)
 import           Data.Time
+import           Data.Time.Clock
+import           Data.Ratio              (numerator)
 import           Database.Persist.Sqlite
+import           System.Random
 import           Yesod
+import           Network.HTTP.Types      (status200,status201,status400,status403,status404)
+
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
-Tweet
-    content Text
-    username Text
-    added UTCTime
+Userinfo
+  email Text
+  password Text
+  userid Text
+  token Text
 |]
+
+instance ToJSON (Entity Userinfo) where
+    toJSON (Entity pid p) = object
+        [ "id"       .= (String $ toPathPiece pid)
+        , "email"    .= userinfoEmail p
+        , "password" .= userinfoPassword p
+        , "userid"   .= userinfoUserid p
+        , "token"    .= userinfoToken p
+        ]
+
+instance FromJSON Userinfo where
+    parseJSON (Object o) = Userinfo
+        <$> o .: "email"
+        <*> o .: "password"
+        <*> o .: "userid"
+        <*> o .: "token"
+
+    parseJSON _ = mzero
 
 data App = App ConnectionPool
 
 mkYesod "App" [parseRoutes|
-/         HomeR    GET
-/add-tweet AddTweetR POST
+/api/v1/signup         SignupR GET POST
 |]
+
+getSignupR :: Handler Value
+getSignupR = do
+    userinfos <- runDB $ selectList [] [] :: Handler [Entity Userinfo]
+
+    return $ object ["userinfos" .= userinfos]
+
+postSignupR :: Handler Value
+postSignupR = do
+    userinfoItem <- requireJsonBody :: Handler Userinfo
+    userInfoEntry <- runDB $ selectFirst [UserinfoEmail ==. userinfoEmail userinfoItem ] [LimitTo 1]
+    case userInfoEntry of
+        Just u  -> sendResponseStatus status403 ("Email Address Exist" :: Text)
+        Nothing -> do
+            userInfoEntry2 <- runDB $ selectFirst [UserinfoUserid ==. userinfoUserid userinfoItem ] [LimitTo 1]
+            case userInfoEntry2 of
+                Just u  -> sendResponseStatus status403 ("User Name Exist" :: Text)
+                Nothing -> do 
+                    entryId    <- runDB $ insert $ userinfoItem 
+                    newtoken <- liftIO randomGen
+                    _          <- runDB $ update entryId [UserinfoToken =. newtoken]
+                    return $ object ["token" .= newtoken]
+
+getTime :: IO Integer
+getTime = do
+  utc <- getCurrentTime
+  let daytime = toRational $ utctDayTime utc
+  return $ numerator daytime
+
+randomGen :: IO Text
+randomGen = do 
+    timestamp <- fromIntegral <$> getTime
+    return $ pack $ take 10 . randomRs ('a', 'z') . mkStdGen $ timestamp
 
 instance Yesod App
 
@@ -37,40 +98,8 @@ instance YesodPersist App where
         App pool <- getYesod
         runSqlPool db pool
 
-getHomeR :: Handler Html
-getHomeR = defaultLayout
-    [whamlet|
-        <h2>Latest feeds
-            ^{latestFeeds}
-        <form method=post action=@{AddTweetR}>
-            <p>
-                User
-                <input type=text name=username>
-                Text
-                <input type=text name=content>
-                <input type=submit value="Send Message">
-    |]
-
-latestFeeds :: Widget
-latestFeeds = do
-    tweets <- handlerToWidget $ runDB $ selectList [] [LimitTo 5, Desc TweetAdded]
-    [whamlet|
-        <ul>
-            $forall Entity _ tweet <- tweets
-                <li>
-                    #{tweetUsername tweet} : #{tweetContent tweet}
-    |]
-
-postAddTweetR :: Handler ()
-postAddTweetR = do
-    username <- runInputPost $ ireq textField "username"
-    content <- runInputPost $ ireq textField "content"
-    now <- liftIO getCurrentTime
-    runDB $ insert $ Tweet content username now
-    setMessage "content posted"
-    redirect HomeR
-
 main :: IO ()
-main = runNoLoggingT $ withSqlitePool "feeds.db3" 10 $ \pool -> liftIO $ do
+main = runNoLoggingT $ withSqlitePool "links.db3" 10 $ \pool -> liftIO $ do
     runSqlPersistMPool (runMigration migrateAll) pool
     warp 3000 $ App pool
+
