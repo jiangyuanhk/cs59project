@@ -14,7 +14,6 @@ import           Control.Monad
 import           Control.Monad.Logger    (runNoLoggingT)
 import           Data.Text               (Text, pack)
 import           Data.Time
-import           Data.Time.Clock
 import           Data.Ratio              (numerator)
 import           Database.Persist.Sqlite
 import           System.Random
@@ -51,7 +50,8 @@ instance FromJSON Userinfo where
 data App = App ConnectionPool
 
 mkYesod "App" [parseRoutes|
-/api/v1/signup         SignupR GET POST
+/api/v1/signup          SignupR GET POST
+/api/v1/login           LoginR      POST
 |]
 
 getSignupR :: Handler Value
@@ -72,7 +72,7 @@ postSignupR = do
                 Just u  -> sendResponseStatus status403 ("User Name Exist" :: Text)
                 Nothing -> do 
                     entryId    <- runDB $ insert $ userinfoItem 
-                    newtoken <- liftIO randomGen
+                    newtoken   <- liftIO randomGen
                     _          <- runDB $ update entryId [UserinfoToken =. newtoken]
                     return $ object ["token" .= newtoken]
 
@@ -87,6 +87,14 @@ randomGen = do
     timestamp <- fromIntegral <$> getTime
     return $ pack $ take 10 . randomRs ('a', 'z') . mkStdGen $ timestamp
 
+postLoginR :: Handler Value
+postLoginR = do
+    userinfoItem <- requireJsonBody :: Handler Userinfo
+    userInfoEntry <- runDB $ selectFirst [UserinfoEmail ==. userinfoEmail userinfoItem, UserinfoPassword ==. userinfoPassword userinfoItem] []
+    case userInfoEntry of
+        Nothing -> sendResponseStatus status403 ("Invalid Email or Password"::Text)
+        Just (Entity pid p)  -> do
+            return $ object ["userid" .= userinfoUserid p, "token" .= userinfoToken  p]
 instance Yesod App
 
 instance RenderMessage App FormMessage where
