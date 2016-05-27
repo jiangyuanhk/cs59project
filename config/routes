@@ -1,0 +1,2 @@
+/api/v1/signup		SignupR GET POST
+/api/v1/login   	LoginR      POST
