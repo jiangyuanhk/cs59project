@@ -30,6 +30,14 @@ instance ToJSON (Entity Userinfo) where
         , "token"    .= userinfoToken p
         ]
 
+instance ToJSON (Entity Tweetinfo) where
+    toJSON (Entity pid p) = object
+        [ "id"       .= (String $ toPathPiece pid)
+        , "userid"   .= tweetinfoUserid p
+        , "content"  .= tweetinfoContent p
+        , "added"    .= tweetinfoAdded p
+        ]
+
 instance FromJSON Userinfo where
     parseJSON (Object o) = Userinfo
         <$> o .: "email"
@@ -37,4 +45,13 @@ instance FromJSON Userinfo where
         <*> o .: "userid"
         <*> o .: "token"
     
+    parseJSON _ = mzero
+
+instance FromJSON Tweetinfo where
+    parseJSON (Object o) = Tweetinfo
+        <$> o .: "userid"
+        <*> o .: "token"
+        <*> o .: "content"
+        <*> o .: "added"
+
     parseJSON _ = mzero

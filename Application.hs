@@ -27,6 +27,8 @@ import           Model
 import           Import
 import           Handler.Login
 import           Handler.Signup
+import           Handler.Ptweet
+import           Handler.Disp
 
 
 -- second half of defining all the routes
