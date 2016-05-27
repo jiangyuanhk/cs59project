@@ -1,0 +1,5 @@
+Userinfo
+	email Text
+	password Text
+	userid Text
+	token Text
