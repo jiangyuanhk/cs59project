@@ -5,7 +5,7 @@ http://docs.haskellstack.org/en/stable/install_and_upgrade/
 
 2. Clone or download our project
 
-3. Run `stack install` and `stack build` inside the home direcotry of the project
+3. Run `stack setup` and `stack build` inside the home direcotry of the project
 
 3. Run the project using `stack exec cs59project`
 
