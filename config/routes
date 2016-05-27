@@ -1,2 +1,4 @@
 /api/v1/signup		SignupR GET POST
 /api/v1/login   	LoginR      POST
+/api/v1/p           PtweetR     POST
+/api/v1/display     DispR   GET
