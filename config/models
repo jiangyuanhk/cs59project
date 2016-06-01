@@ -1,0 +1,10 @@
+Userinfo
+	email Text
+	password Text
+	userid Text
+	token Text
+Tweetinfo
+    userid Text
+    token Text
+    content Text
+    added UTCTime
