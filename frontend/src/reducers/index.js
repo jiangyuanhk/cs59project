@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
+import tweets from './reducer_tweets';
+
 
 const rootReducer = combineReducers({
-  state: (state = {}) => state
+  tweets,
 });
 
 export default rootReducer;
