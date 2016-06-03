@@ -3,21 +3,56 @@ import React, {
 } from 'react'
 
 class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: '',
+      password: ''
+    };
+  }
+
+  login = (e) => {
+    console.log('login is called');
+    // e.preventDefault();
+    // AuthService.login(this.state);
+  }
+
+  onInputEmail = (event) => {
+    console.log(event.target.value);
+    this.setState({email: event.target.value});
+  }
+
+  onInputPassword = (event) => {
+    console.log(event.target.value);
+    this.setState({password: event.target.value});
+  }
+
   render () {
     return (
       <div className="container">
         <form className="form-signin">
           <h2 className="form-signin-heading">Please sign in</h2>
-          <label for="inputEmail" className="sr-only">Email address</label>
-          <input type="email" id="inputEmail" className="form-control" placeholder="Email address" required autofocus/>
-          <label for="inputPassword" className="sr-only">Password</label>
-          <input type="password" id="inputPassword" className="form-control" placeholder="Password" required/>
-          <div className="checkbox">
-            <label>
-              <input type="checkbox" value="remember-me"> Remember me </input>
-            </label>
-          </div>
-          <button className="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+          <input
+            type="email"
+            id="inputEmail"
+            className="form-control"
+            placeholder="Email address"
+            value={this.state.email}
+            onChange={this.onInputEmail}
+            required autofocus/>
+          <input
+            type="password"
+            id="inputPassword"
+            className="form-control"
+            placeholder="Password"
+            value={this.state.password}
+            onChange={this.onInputPassword}
+            required/>
+          <button
+            className="btn btn-lg btn-primary btn-block"
+            type="submit">
+            Sign in
+          </button>
         </form>
       </div>
     );
