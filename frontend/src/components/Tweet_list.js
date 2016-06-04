@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Map } from 'immutable';
 
 class TweetList extends Component {
   renderTweet(tweet) {
@@ -30,8 +32,24 @@ class TweetList extends Component {
   }
 }
 
-function mapStateToProps({ tweets }) {
-  return { tweets };
+//bipolate
+function mapStateToProps(state) {
+  return {...state};
 }
 
-export default connect(mapStateToProps)(TweetList);
+const actions = [
+];
+
+function mapDispatchToProps(dispatch) {
+  const creators = Map()
+  .merge(...actions)
+  .filter(value => typeof value === 'function')
+  .toObject();
+
+  return {
+    actions: bindActionCreators(creators, dispatch),
+    dispatch
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TweetList);

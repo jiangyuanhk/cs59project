@@ -1,19 +1,19 @@
 export default function () {
   return [
     {
-      userid: "userid",
+      userid: "1",
       token: "token",
       content: "content",
       added: "added"
     },
     {
-      userid: "userid",
+      userid: "2",
       token: "token",
       content: "content",
       added: "added"
     },
     {
-      userid: "userid",
+      userid: "3",
       token: "token",
       content: "content",
       added: "added"
