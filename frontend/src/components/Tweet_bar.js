@@ -1,4 +1,8 @@
-import React, { PropTypes } from 'react'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Map } from 'immutable';
+import * as tweetActions from '../reducers/tweetActions';
 
 class TweetBar extends React.Component {
 
@@ -16,7 +20,12 @@ class TweetBar extends React.Component {
 
   onFormSubmit = (event) => {
     event.preventDefault();
-    // TODO: submit the tweet to the backend, and then fetch the new all tweets
+    this.props.actions.postTweet(
+      this.props.user.userid,
+      this.props.user.token,
+      this.state.content
+    );
+    this.props.actions.getAllTweets();
     this.setState({ content: '' });
   }
 
@@ -38,4 +47,25 @@ class TweetBar extends React.Component {
   }
 }
 
-export default TweetBar;
+//bipolate
+function mapStateToProps(state) {
+  return {...state};
+}
+
+const actions = [
+  tweetActions
+];
+
+function mapDispatchToProps(dispatch) {
+  const creators = Map()
+  .merge(...actions)
+  .filter(value => typeof value === 'function')
+  .toObject();
+
+  return {
+    actions: bindActionCreators(creators, dispatch),
+    dispatch
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TweetBar);

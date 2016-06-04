@@ -47,6 +47,7 @@ class SignUp extends Component {
       this.setState({alertText: 'confirm Password and Password is not the same !'});
       return;
     };
+
     this.props.actions.signUp(
       this.state.email,
       this.state.password,

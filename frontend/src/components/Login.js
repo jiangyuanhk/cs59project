@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
 
 import * as userActions from '../reducers/userActions';
+import * as tweetActions from '../reducers/tweetActions';
 
 class Login extends Component {
   constructor(props) {
@@ -38,6 +39,7 @@ class Login extends Component {
       this.state.password,
       this.state.userid
     );
+    this.props.actions.getAllTweets();
   }
 
   render () {
@@ -88,7 +90,8 @@ function mapStateToProps(state) {
 }
 
 const actions = [
-  userActions
+  userActions,
+  tweetActions
 ];
 
 function mapDispatchToProps(dispatch) {
