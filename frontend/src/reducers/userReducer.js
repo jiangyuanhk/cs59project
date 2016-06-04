@@ -1,7 +1,7 @@
-import {
+const {
+  SIGN_UP,
   LOG_IN,
-  SIGN_UP
-} from '../actions/index';
+} = require('../config').default;
 
 const initialState = null;
 
@@ -9,7 +9,8 @@ export default function(state = initialState, action) {
   switch (action.type) {
     case LOG_IN:
     case SIGN_UP:
-      return action.payload;
+      console.log("recevied:" + action.payload);
+      return action.error ? null : action.payload;
     default:
       return state;
   }
