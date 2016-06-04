@@ -22,4 +22,4 @@ postLoginR = do
         Just (Entity pid p)  -> do
             newtoken   <- liftIO randomGen
             _          <- runDB $ update pid [UserinfoToken =. newtoken]
-            return $ object ["userid" .= userinfoUserid p, "token" .= newtoken]
+            return $ object ["email" .= userinfoEmail p, "password" .= userinfoPassword p, "userid" .= userinfoUserid p, "token" .= newtoken]
