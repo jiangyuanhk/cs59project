@@ -21,7 +21,7 @@ class App extends Component {
         </div>
       );
     }
-    return <SignUp/>;
+    return <Login/>;
   }
 }
 

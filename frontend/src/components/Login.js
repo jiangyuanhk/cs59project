@@ -1,37 +1,60 @@
-import React, {
-  Component
-} from 'react'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Map } from 'immutable';
+
+import * as userActions from '../reducers/userActions';
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
       email: '',
-      password: ''
+      password: '',
+      userid: ''
     };
   }
 
-  login = (e) => {
-    console.log('login is called');
-    // e.preventDefault();
-    // AuthService.login(this.state);
-  }
-
   onInputEmail = (event) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     this.setState({email: event.target.value});
   }
 
   onInputPassword = (event) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     this.setState({password: event.target.value});
+  }
+
+  onInputUserID = (event) => {
+    // console.log(event.target.value);
+    this.setState({userid: event.target.value});
+  }
+
+  onFormSubmit = (event) => {
+    console.log("onFormSubmit is called");
+    event.preventDefault();
+    this.props.actions.login(
+      this.state.email,
+      this.state.password,
+      this.state.userid
+    );
   }
 
   render () {
     return (
       <div className="container">
-        <form className="form-signin">
-          <h2 className="form-signin-heading">Please sign in</h2>
+        <form
+          className="form-signin"
+          onSubmit={this.onFormSubmit}>
+          <h2 className="form-signin-heading">Please Log in</h2>
+          <input
+            type="text"
+            id="inputUserId"
+            className="form-control"
+            placeholder="User ID"
+            value={this.state.userid}
+            onChange={this.onInputUserID}
+            required autofocus/>
           <input
             type="email"
             id="inputEmail"
@@ -39,7 +62,7 @@ class Login extends Component {
             placeholder="Email address"
             value={this.state.email}
             onChange={this.onInputEmail}
-            required autofocus/>
+            required/>
           <input
             type="password"
             id="inputPassword"
@@ -51,7 +74,7 @@ class Login extends Component {
           <button
             className="btn btn-lg btn-primary btn-block"
             type="submit">
-            Sign in
+            Log in
           </button>
         </form>
       </div>
@@ -59,4 +82,25 @@ class Login extends Component {
   }
 }
 
-export default Login;
+//bipolate
+function mapStateToProps(state) {
+  return {...state};
+}
+
+const actions = [
+  userActions
+];
+
+function mapDispatchToProps(dispatch) {
+  const creators = Map()
+  .merge(...actions)
+  .filter(value => typeof value === 'function')
+  .toObject();
+
+  return {
+    actions: bindActionCreators(creators, dispatch),
+    dispatch
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

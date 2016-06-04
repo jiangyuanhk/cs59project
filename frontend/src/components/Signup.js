@@ -47,7 +47,6 @@ class SignUp extends Component {
       this.setState({alertText: 'confirm Password and Password is not the same !'});
       return;
     };
-    //TODO: if the same, submit to the server
     this.props.actions.signUp(
       this.state.email,
       this.state.password,

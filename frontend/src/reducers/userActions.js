@@ -1,6 +1,7 @@
 const {
   SIGN_UP,
   LOG_IN,
+  LOG_OUT,
 } = require('../config').default;
 
 import axios from 'axios';
@@ -45,4 +46,10 @@ export function login(email, password, userid) {
     type: LOG_IN,
     payload: request
   };
+}
+
+export function logout() {
+  return {
+    type: LOG_OUT
+  }
 }
