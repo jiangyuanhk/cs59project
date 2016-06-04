@@ -30,4 +30,4 @@ postSignupR = do
                     entryId    <- runDB $ insert $ userinfoItem 
                     newtoken   <- liftIO randomGen
                     _          <- runDB $ update entryId [UserinfoToken =. newtoken]
-                    return $ object ["token" .= newtoken]
+                    return $ object ["email" .= userinfoEmail userinfoItem, "password" .= userinfoPassword userinfoItem, "userid" .= userinfoToken userinfoItem, "token" .= newtoken]
