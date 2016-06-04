@@ -1,6 +1,8 @@
 export const LOG_IN = 'login';
 export const SIGN_UP = 'singup';
 
+import axios from 'axios';
+
 export function SignUp(email, password) {
   const userObj = {
     email: email,
