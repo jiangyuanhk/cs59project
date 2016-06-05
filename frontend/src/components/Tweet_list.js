@@ -2,14 +2,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
+import moment from 'moment';
+
+
+import * as tweetActions from '../reducers/tweetActions';
 
 class TweetList extends Component {
   renderTweet(tweet) {
     return (
-      <tr key={tweet.userid}>
+      <tr key={tweet.added}>
         <td>{tweet.userid}</td>
         <td>{tweet.content}</td>
-        <td>{tweet.added}</td>
+        <td>{moment(tweet.added, moment.ISO_8601).fromNow()}</td>
       </tr>
     );
   }
@@ -38,6 +42,7 @@ function mapStateToProps(state) {
 }
 
 const actions = [
+  tweetActions
 ];
 
 function mapDispatchToProps(dispatch) {

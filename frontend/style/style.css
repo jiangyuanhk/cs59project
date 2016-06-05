@@ -33,6 +33,17 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+.navbar-brand
+{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin:0 auto;
+}
+.navbar-toggle {
+    z-index:3;
+}
 
 
 .input-group {

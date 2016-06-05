@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
+import { Link } from 'react-router';
 
 import * as userActions from '../reducers/userActions';
 
@@ -47,7 +48,7 @@ class SignUp extends Component {
       this.setState({alertText: 'confirm Password and Password is not the same !'});
       return;
     };
-    //TODO: if the same, submit to the server
+
     this.props.actions.signUp(
       this.state.email,
       this.state.password,
@@ -99,6 +100,7 @@ class SignUp extends Component {
             type="submit">
             Sign Up
           </button>
+          <div>Already have an account ? please <Link to={'/login'}>sign up</Link></div>
           <text>{this.state.alertText}</text>
         </form>
       </div>
