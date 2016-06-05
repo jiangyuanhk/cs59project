@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
+import { Link } from 'react-router';
+import { push } from 'react-router-redux';
 
 import * as userActions from '../reducers/userActions';
 import * as tweetActions from '../reducers/tweetActions';
@@ -40,6 +42,7 @@ class Login extends Component {
       this.state.userid
     );
     this.props.actions.getAllTweets();
+    this.props.dispatch(push('/'));
   }
 
   render () {
@@ -78,6 +81,7 @@ class Login extends Component {
             type="submit">
             Log in
           </button>
+          <div>Do not have an account ? please <Link to={'/signup'}>sign up</Link></div>
         </form>
       </div>
     );

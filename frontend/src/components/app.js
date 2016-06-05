@@ -30,19 +30,19 @@ function mapStateToProps(state) {
   return {...state};
 }
 
-// const actions = [
-// ];
-//
-// function mapDispatchToProps(dispatch) {
-//   const creators = Map()
-//   .merge(...actions)
-//   .filter(value => typeof value === 'function')
-//   .toObject();
-//
-//   return {
-//     actions: bindActionCreators(creators, dispatch),
-//     dispatch
-//   };
-// }
+const actions = [
+];
+
+function mapDispatchToProps(dispatch) {
+  const creators = Map()
+  .merge(...actions)
+  .filter(value => typeof value === 'function')
+  .toObject();
+
+  return {
+    actions: bindActionCreators(creators, dispatch),
+    dispatch
+  };
+}
 
 export default connect(mapStateToProps)(App);

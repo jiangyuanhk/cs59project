@@ -2,10 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Map } from 'immutable';
+import { push } from 'react-router-redux';
 
 import * as userActions from '../reducers/userActions';
 
 class Header extends React.Component {
+
+  onLogOutClick = () => {
+    this.props.actions.logout();
+    this.props.dispatch(push('/login'));
+  }
+
   render () {
     return (
       <nav className="navbar navbar-default navbar-fixed-top">
@@ -13,7 +20,7 @@ class Header extends React.Component {
           <text>{`Welcome! ${this.props.user.userid}`}</text>
           <button
             type="button"
-            onClick={this.props.actions.logout}
+            onClick={this.onLogOutClick}
             className="btn btn-default navbar-btn">Log out</button>
         </div>
       </nav>
